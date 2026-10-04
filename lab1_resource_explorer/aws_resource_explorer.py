@@ -10,4 +10,12 @@ def show_identity():
     print(f"ARN        : {identity['Arn']}")
 
 
+def show_region():
+    session = boto3.session.Session()
+    print("CURRENT REGION")
+    print(f"Region  : {session.region_name}")
+    print(f"Profile : {session.profile_name}")
+
+
 show_identity()
+show_region()
