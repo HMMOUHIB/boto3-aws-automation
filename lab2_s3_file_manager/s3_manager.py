@@ -86,17 +86,44 @@ def list_objects():
         print(f"\n{total_objects} object(s), "
               f"{total_bytes / 1024 / 1024:.2f} MB")
 
-
 def download_file():
-    print("download_file")
+    bucket = input("Bucket name: ").strip()
+    key = input("Object key: ").strip()
+    if not bucket or not key:
+        print("Bucket name and object key are required.")
+        return
+    dest = input("Save as: ").strip() or os.path.basename(key)
+    try:
+        s3.download_file(bucket, key, dest)
+        print(f"Downloaded -> {dest}")
+    except ClientError as e:
+        if e.response["Error"]["Code"] == "404":
+            print("That object does not exist.")
+        else:
+            raise
 
 
 def delete_file():
-    print("delete_file")
+    bucket = input("Bucket name: ").strip()
+    key = input("Object key: ").strip()
+    try:
+        s3.delete_object(Bucket=bucket, Key=key)
+        print(f"Deleted s3://{bucket}/{key}")
+    except ClientError as e:
+        print(f"[AWS ERROR] {e.response['Error']['Code']}")
 
 
 def generate_presigned_url():
-    print("generate_presigned_url")
+    bucket = input("Bucket name: ").strip()
+    key = input("Object key: ").strip()
+    raw = input("Valid for how many seconds? [3600]: ").strip()
+    expires = int(raw) if raw.isdigit() else 3600
+    url = s3.generate_presigned_url(
+        ClientMethod="get_object",
+        Params={"Bucket": bucket, "Key": key},
+        ExpiresIn=expires,
+    )
+    print(f"\nValid for {expires} seconds:\n{url}\n")
 
 
 def delete_bucket():
