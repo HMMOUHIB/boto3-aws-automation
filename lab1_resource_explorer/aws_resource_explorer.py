@@ -17,5 +17,16 @@ def show_region():
     print(f"Profile : {session.profile_name}")
 
 
+def list_buckets_with_client():
+    s3 = boto3.client("s3")
+    response = s3.list_buckets()
+    print("S3 BUCKETS (via client)")
+    for bucket in response["Buckets"]:
+        created = bucket["CreationDate"].strftime("%Y-%m-%d %H:%M")
+        print(f"  {bucket['Name']:<45} created {created}")
+    print(f"Total: {len(response['Buckets'])} bucket(s)")
+
+
 show_identity()
 show_region()
+list_buckets_with_client()
