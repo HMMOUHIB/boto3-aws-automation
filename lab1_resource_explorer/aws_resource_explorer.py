@@ -27,6 +27,14 @@ def list_buckets_with_client():
     print(f"Total: {len(response['Buckets'])} bucket(s)")
 
 
+def list_buckets_with_resource():
+    s3 = boto3.resource("s3")
+    print("S3 BUCKETS (via resource)")
+    for bucket in s3.buckets.all():
+        print(f"  {bucket.name}")
+
+
 show_identity()
 show_region()
 list_buckets_with_client()
+list_buckets_with_resource()
